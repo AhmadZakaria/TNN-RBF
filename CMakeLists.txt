@@ -1,0 +1,23 @@
+project(TNN-C)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pg -fopenmp -march=native -std=c++11 -O3")
+cmake_minimum_required(VERSION 2.8)
+
+macro (add_sources)
+    file (RELATIVE_PATH _relPath "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach (_src ${ARGN})
+        if (_relPath)
+            list (APPEND SRCS "${_relPath}/${_src}")
+        else()
+            list (APPEND SRCS "${_src}")
+        endif()
+    endforeach()
+    if (_relPath)
+        # propagate SRCS to parent directory
+        set (SRCS ${SRCS} PARENT_SCOPE)
+    endif()
+endmacro()
+
+aux_source_directory(. SRC_LIST)
+aux_source_directory(Eigen SRC_LIST)
+aux_source_directory(Kmeans SRC_LIST)
+add_executable(${PROJECT_NAME} ${SRC_LIST})
